@@ -1,12 +1,14 @@
 export default function handler(req, res) {
-  // Get car issue from query parameters (e.g., ?issue=engine noise)
-  const { issue } = req.query;
-
-  if (!issue) {
-    return res.status(400).json({ error: "Please provide a car issue as 'issue' query parameter." });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Only POST method is allowed." });
   }
 
-  // Simple knowledge base for issues and tips
+  const { issue } = req.body;
+
+  if (!issue) {
+    return res.status(400).json({ error: "Please provide 'issue' in request body." });
+  }
+
   const carMaintenanceTips = {
     "engine noise": {
       tip: "Check engine oil level and quality. If low or dirty, change it.",
@@ -90,7 +92,6 @@ export default function handler(req, res) {
     },
   };
 
-  // Normalize input to lowercase for matching
   const key = issue.toLowerCase();
 
   if (carMaintenanceTips[key]) {
